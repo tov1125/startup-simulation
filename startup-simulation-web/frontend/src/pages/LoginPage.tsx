@@ -12,6 +12,8 @@ import {
   Grid,
 } from '@mui/material';
 import { Google as GoogleIcon } from '@mui/icons-material';
+import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginPageProps {
   setAuth: (value: boolean) => void;
@@ -21,17 +23,58 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
     
-    // 임시 로그인 처리
-    if (email && password) {
-      setAuth(true);
-      // 실제로는 API 호출
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
     } else {
-      setError('이메일과 비밀번호를 입력하세요.');
+      setAuth(true);
+      navigate('/');
     }
+  };
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin
+      }
+    });
+    
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
+  const handleSignUp = async () => {
+    setLoading(true);
+    setError('');
+    
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError(error.message);
+    } else {
+      setError('회원가입 성공! 이메일을 확인해주세요.');
+    }
+    setLoading(false);
   };
 
   return (
@@ -53,7 +96,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
           </Typography>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity={error.includes('성공') ? 'success' : 'error'} sx={{ mb: 2 }}>
               {error}
             </Alert>
           )}
@@ -70,6 +113,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
               autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
             />
             <TextField
               margin="normal"
@@ -82,6 +126,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
             />
             
             <Button
@@ -89,6 +134,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
             >
               로그인
             </Button>
@@ -100,6 +146,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
               variant="outlined"
               startIcon={<GoogleIcon />}
               sx={{ mb: 2 }}
+              onClick={handleGoogleLogin}
+              disabled={loading}
             >
               Google로 로그인
             </Button>
@@ -111,9 +159,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Button 
+                  variant="text" 
+                  size="small"
+                  onClick={handleSignUp}
+                  disabled={loading}
+                >
                   회원가입
-                </Link>
+                </Button>
               </Grid>
             </Grid>
           </Box>
