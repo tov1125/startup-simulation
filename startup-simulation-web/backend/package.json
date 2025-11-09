@@ -1,0 +1,46 @@
+{
+  "name": "startup-simulation-backend",
+  "version": "1.0.0",
+  "description": "창업 시뮬레이션 백엔드 서버",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "nodemon --watch src --exec ts-node src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.0.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.9.0",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.1",
+    "morgan": "^1.10.0",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.1",
+    "redis": "^4.6.7",
+    "socket.io": "^4.7.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/morgan": "^1.9.4",
+    "@types/node": "^20.4.0",
+    "@types/passport": "^1.0.12",
+    "@types/passport-jwt": "^3.0.9",
+    "@types/uuid": "^9.0.2",
+    "jest": "^29.6.1",
+    "nodemon": "^3.0.1",
+    "prisma": "^5.0.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  }
+}
